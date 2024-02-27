@@ -1,4 +1,4 @@
-import tiendas from "../models/Tiendas.js";
+/* import tiendas from "../models/Tiendas.js";
 
 // Obtener todos los tiendass
 const obtenertiendass = async (req, res) => {
@@ -65,3 +65,76 @@ export {
   actualizartiendas,
   obtenertiendas,
 };
+ */
+
+import tiendas from "../models/Tiendas.js";
+
+const tiendasController = {
+  getAlltiendases: async (req, res) => {
+    try {
+      const tiendases = await tiendas.findAll();
+      res.status(200).json(tiendases);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  gettiendasById: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const tiendas = await tiendas.findOne({ _id: id });
+      if (tiendas) {
+        res.status(200).json(tiendas);
+      } else {
+        res.status(404).json({ message: 'Promoción no encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  createtiendas: async (req, res) => {
+    const { nombre, vigencia } = req.body;
+    try {
+      const nuevatiendas = await tiendas.create({ nombre, vigencia });
+      res.status(201).json(nuevatiendas);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  updatetiendas: async (req, res) => {
+    const { id } = req.params;
+    const { nombre, vigencia } = req.body;
+    try {
+      const tiendas = await tiendas.findOne({ _id: id });
+      if (tiendas) {
+        tiendas.nombre = nombre || tiendas.nombre;
+        tiendas.vigencia = vigencia || tiendas.vigencia;
+        await tiendas.save();
+        res.status(200).json(tiendas);
+      } else {
+        res.status(404).json({ message: 'Promoción no encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  deletetiendas: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const tiendas = await tiendas.findOne({ _id: id });
+      if (tiendas) {
+        await tiendas.deleteOne({ _id: id });
+        res.status(204).end();
+      } else {
+        res.status(404).json({ message: 'Promoción no encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+};
+
+export default tiendasController;

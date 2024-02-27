@@ -1,18 +1,13 @@
-import { Router } from "express";
-import {
-  obtenerpromocions,
-  agregarpromocion,
-  borrarpromocion,
-  actualizarpromocion,
-  obtenerpromocion,
-} from "../controllers/promocion.controllers.js";
+import express from 'express';
+import PromocionController from '../controllers/promocion.controllers.js';
 
-const router = Router();
+const router = express.Router();
 
-router.get("/", obtenerpromocions);
-router.post("/", agregarpromocion);
-router.delete("/:id", borrarpromocion);
-router.patch("/:id", actualizarpromocion);
-router.get("/:id", obtenerpromocion);
+// Rutas para las promociones
+router.get('/', PromocionController.getAllPromociones);
+router.get('/:id', PromocionController.getPromocionById);
+router.post('/', PromocionController.createPromocion);
+router.put('/:id', PromocionController.updatePromocion);
+router.delete('/:id', PromocionController.deletePromocion);
 
 export default router;

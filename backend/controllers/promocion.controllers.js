@@ -1,4 +1,4 @@
-import promocion from "../models/promociones.js";
+/* import promocion from "../models/promociones.js";
 
 const obtenerpromocions = async (req, res) => {
   const promocions = await promocion.find();
@@ -67,3 +67,76 @@ export {
   actualizarpromocion,
   obtenerpromocion,
 };
+ */
+
+import Promocion from "../models/promociones.js";
+
+const PromocionController = {
+  getAllPromociones: async (req, res) => {
+    try {
+      const promociones = await Promocion.findAll();
+      res.status(200).json(promociones);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  getPromocionById: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const promocion = await Promocion.findOne({ _id: id });
+      if (promocion) {
+        res.status(200).json(promocion);
+      } else {
+        res.status(404).json({ message: 'Promoción no encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  createPromocion: async (req, res) => {
+    const { nombre, vigencia } = req.body;
+    try {
+      const nuevaPromocion = await Promocion.create({ nombre, vigencia });
+      res.status(201).json(nuevaPromocion);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  updatePromocion: async (req, res) => {
+    const { id } = req.params;
+    const { nombre, vigencia } = req.body;
+    try {
+      const promocion = await Promocion.findOne({ _id: id });
+      if (promocion) {
+        promocion.nombre = nombre || promocion.nombre;
+        promocion.vigencia = vigencia || promocion.vigencia;
+        await promocion.save();
+        res.status(200).json(promocion);
+      } else {
+        res.status(404).json({ message: 'Promoción no encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  deletePromocion: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const promocion = await Promocion.findOne({ _id: id });
+      if (promocion) {
+        await promocion.deleteOne({ _id: id });
+        res.status(204).end();
+      } else {
+        res.status(404).json({ message: 'Promoción no encontrada' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+};
+
+export default PromocionController;

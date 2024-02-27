@@ -1,6 +1,7 @@
 import express from "express";
-import productosRouter from "../router/productos.routes.js";
 import tiendasRouter from "../router/tiendas.routes.js"
+import productosRouter from "../router/productos.routes.js";
+
 import conectarDB from "../database/config.js";
 import promocionRouter from "../router/promocion.routes.js";
 import usersRouter from "../router/users.routes.js"
@@ -18,7 +19,6 @@ class Server {
       productosPath: "/productos",
       tiendasPath: "/tiendas",
       promocionPath: "/promociones",
-      tiendas_productosPath: "/tiendas_productos",
       usersPath: "/users",
       /* comprasClientPath: "/compras_clientes", */
       
@@ -28,8 +28,15 @@ class Server {
   }
 
   async connect() {
-    await conectarDB();
+    try {
+      await conectarDB();
+      console.log('Conexión a la base de datos exitosa.');
+    } catch (error) {
+      console.error(`Error al conectar a la base de datos: ${error.message}`);
+      process.exit(1); // Detiene la ejecución de la aplicación en caso de error
+    }
   }
+  
 
   middlewares() {
     this.app.use(express.json());

@@ -1,4 +1,4 @@
-import { Router } from "express";
+/* import { Router } from "express";
 import {
   obtenerproductoss,
   agregarproductos,
@@ -15,4 +15,19 @@ router.delete("/:id", borrarproductos);
 router.patch("/:id", actualizarproductos);
 router.get("/:id", obtenerproductos);
 
+export default router; */
+
+import express from 'express';
+import ProductosController from '../controllers/productos.controllers.js';
+
+const router = express.Router();
+
+// Rutas relacionadas con Productos
+router.get('/', ProductosController.getAllProductos);
+router.get('/:id', ProductosController.getProductoById);
+router.post('/', ProductosController.createProducto);
+router.put('/:id', ProductosController.updateProducto);
+router.delete('/:id', ProductosController.deleteProducto);
+
 export default router;
+

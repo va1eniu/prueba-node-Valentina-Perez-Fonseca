@@ -1,8 +1,25 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+dotenv.config();
+import conectarDB from "./database/config.js";
 import Server from "./models/server.js";
 
-dotenv.config();
+const iniciarApp = async () => {
+    try {
 
-const server = new Server();
+        await conectarDB();
+        
+      
+        const server = new Server();
 
-server.listen();
+     
+        server.listen();
+
+        console.log('La aplicación se ha iniciado correctamente.');
+
+    } catch (error) {
+        console.error('Error al iniciar la aplicación:', error.message);
+    }
+};
+
+iniciarApp();
+
