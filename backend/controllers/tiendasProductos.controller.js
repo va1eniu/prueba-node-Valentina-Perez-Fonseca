@@ -1,50 +1,68 @@
-import Tiendas from '../models/Tiendas.js';
 import TiendasProductos from '../models/Tiendas_Productos.js';
-import Promocion from '../models/Promociones.js'; // Asegúrate de usar la misma convención de nombres
+import Productos from '../models/Productos.js';
+import Promocion from '../models/promociones.js';
+import TiendasPromocion from '../models/Tiendas_promociones.js'; // Asegúrate de tener este modelo
 
 const TiendasPController = {
-  // Otros métodos CRUD existentes...
-
-  // Nuevo método para obtener productos de una tienda con descuentos de Promocion
+  // Método para obtener productos de una tienda con descuentos de Promocion
   getProductosByTienda: async (req, res) => {
     const { id_tienda } = req.params;
 
-    // Verificación de parámetro obligatorio
-    if (!id_tienda) {
-      return res.status(400).json({ error: "Se requiere el parámetro 'id_tienda'." });
-    }
-
     try {
       // Obtener productos de la tienda utilizando la relación
-      const tienda = await Tiendas.findOne({
+      const productos = await TiendasProductos.findAll({
         where: { id_tienda },
         include: [
           {
-            model: TiendasProductos,  // Asegúrate de usar el modelo correcto
-            attributes: ['id_producto', 'valor', 'id_promocion'],  // Especifica las columnas que necesitas
+            model: Productos,
+            attributes: ['id_producto', 'nombre', 'presentacion', 'barcode'],
+          },
+          {
+            model: Promocion,
+            required: false, // Left join con Promocion
+            attributes: ['id_promocion', 'nombre', 'porcentaje'],
+            through: { attributes: [] }, // Evitar traer datos de la tabla intermedia
+            include: [
+              {
+                model: TiendasPromocion,
+                required: true, // Inner join con TiendasPromocion
+                where: {
+                  id_tienda,
+                  estado: 1, // Promoción activa
+                  inicio: { [Op.lte]: new Date() }, // Fecha de inicio menor o igual a hoy
+                  fin: { [Op.gte]: new Date() }, // Fecha de fin mayor o igual a hoy
+                },
+                attributes: [], // Evitar traer datos adicionales de TiendasPromocion
+              },
+            ],
           },
         ],
       });
 
-      // Verificación de datos antes de procesar
-      const productosConDescuentos = tienda && tienda.TiendasProductos ? tienda.TiendasProductos.map(producto => {
-        const promocionVigente = Promocion.find(promo => promo.id === producto.id_promocion);
+      // Formatear los productos
+      const productosFormateados = productos.map(producto => {
+        const { id_producto, nombre, presentacion, barcode, valor } = producto.Producto;
+        const promocion = producto.Promocione; // Puede ser null si no hay promoción
 
-        if (promocionVigente) {
-          // Calcular descuento y aplicar a los productos
-          const descuento = promocionVigente.porcentaje;
-          const valorConDescuento = producto.valor - (producto.valor * descuento / 100);
+        // Calcular el valor con descuento si hay promoción
+        const valorConDescuento = promocion ? valor - (valor * promocion.porcentaje / 100) : valor;
 
-          return {
-            ...producto.toJSON(),
-            valorConDescuento,
-          };
-        }
+        return {
+          id_producto,
+          nombre,
+          presentacion,
+          barcode,
+          valor,
+          promocion: promocion ? {
+            id_promocion: promocion.id_promocion,
+            nombre: promocion.nombre,
+            porcentaje: promocion.porcentaje,
+            valor_promocion: valorConDescuento,
+          } : null,
+        };
+      });
 
-        return producto;
-      }) : [];
-
-      res.status(200).json(productosConDescuentos);
+      res.status(200).json(productosFormateados);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });

@@ -50,8 +50,18 @@ Promocion.init(
         },
       },
     },
-    vigencia: {
-      type: DataTypes.DATE,
+    porcentaje: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'La fecha de compra es requerida',
+        },
+      },
+    },
+    valor: {
+      type: DataTypes.NUMBER,
       allowNull: false,
       validate: {
         notEmpty: {

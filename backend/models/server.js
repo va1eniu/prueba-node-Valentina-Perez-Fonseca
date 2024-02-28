@@ -1,7 +1,7 @@
 import express from "express";
 import tiendasRouter from "../router/tiendas.routes.js"
 import productosRouter from "../router/productos.routes.js";
-
+import Tiendas_promocionesRouter from "../router/Tiendas_promociones.router.js";
 import conectarDB from "../database/config.js";
 import promocionRouter from "../router/promocion.routes.js";
 import usersRouter from "../router/users.routes.js"
@@ -20,6 +20,8 @@ class Server {
       tiendasPath: "/tiendas",
       promocionPath: "/promociones",
       usersPath: "/users",
+      Tiendas_promocionesPath: "/tiendas_promociones"
+
       /* comprasClientPath: "/compras_clientes", */
       
     };
@@ -48,6 +50,7 @@ class Server {
     this.app.use(this.paths.tiendasPath, tiendasRouter);
     this.app.use(this.paths.promocionPath, promocionRouter);
     this.app.use(this.paths.usersPath, usersRouter);
+    this.app.use(this.paths.Tiendas_promocionesPath, Tiendas_promocionesRouter);
 
   }
 

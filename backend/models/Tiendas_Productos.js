@@ -107,12 +107,11 @@ Tiendas.init(
 export default Tiendas;
  */
 
-// tiendasProductos.js
-// Tiendas_Productos.js
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
 import Tiendas from './Tiendas.js';
-import Promociones from './Promociones.js'; // Agregar importación de Promociones
+import Productos from './Productos.js'; // Asegúrate de importar el modelo Productos
+import Promocion from './promociones.js';
 
 dotenv.config();
 
@@ -165,9 +164,21 @@ TiendasProductos.init(
   }
 );
 
+(async () => {
+  try {
+    await sequelize.authenticate();
+
+    await sequelize.sync({ force: true });
+
+  } catch (error) {
+    
+  }
+})();
+
 // Definir relaciones
 TiendasProductos.belongsTo(Tiendas, { foreignKey: 'id_tienda' });
-TiendasProductos.belongsTo(Promociones, { foreignKey: 'id_promocion' }); // Agregar relación con Promociones
+TiendasProductos.belongsTo(Productos, { foreignKey: 'id_producto' });
+TiendasProductos.belongsTo(Promocion, { foreignKey: 'id_promocion' });
 
 export default TiendasProductos;
 
