@@ -1,4 +1,3 @@
-// users.model.js
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
 

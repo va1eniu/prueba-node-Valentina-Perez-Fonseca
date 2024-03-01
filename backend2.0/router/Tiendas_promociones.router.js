@@ -4,7 +4,6 @@ import Tiendas_promocionesController from '../controllers/tiendas_promocion.cont
 
 const router = express.Router();
 
-// Rutas relacionadas con Productos
 router.get('/', Tiendas_promocionesController.getAllTiendas_promocioneses);
 router.get('/:id', Tiendas_promocionesController.getAllTiendas_promocioneses);
 router.post('/', Tiendas_promocionesController.createTiendas_promociones);

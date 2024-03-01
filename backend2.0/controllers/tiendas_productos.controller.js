@@ -57,6 +57,7 @@ const TiendasPController = {
             model: Productos,
             as: 'producto',
             attributes: ['nombre', 'barcode'],
+            
           },
           {
             model: Promocion,

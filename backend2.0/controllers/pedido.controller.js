@@ -1,50 +1,42 @@
-// PedidoController.js
-
 import Carrito from '../models/carritos.model.js';
 import Pedido from '../models/pedidos.model.js';
 import PedidoProducto from '../models/pedidos_productos.model.js';
 import TiendasDistancias from '../models/tiendas_distancias.model.js';
 import TiendasProductos from '../models/tiendas_productos.model.js';
-import PedidoEstado from '../models/pedidos_estados.model.js'; // Ajusta la ruta según la estructura de tu proyecto
-import Tienda from '../models/tiendas.model.js'; // Ajusta la ruta según la estructura de tu proyecto
+import PedidoEstado from '../models/pedidos_estados.model.js';
+import Tienda from '../models/tiendas.model.js';
 import { Op } from 'sequelize';
 
 export const crearPedido = async (req, res) => {
   try {
-    // Obtener datos del request
     const {
       instrucciones,
       entrega_fecha,
       id_tienda,
       id_user,
-      // ...otros datos del request
     } = req.body;
 
-    // Obtener productos del carrito del usuario
     const carritoProductos = await Carrito.findAll({
       include: [
         {
           model: TiendasProductos,
-          as: 'TiendasProducto', // Usa el alias correcto aquí
-          attributes: ['id', 'nombre', 'precio'], // Incluye el campo 'precio'
+          as: 'TiendasProducto',
+          attributes: ['id', 'nombre', 'precio'],
         },
       ],
       where: {
-        id_user: id_user, // Asegúrate de tener esta variable definida
+        id_user: id_user,
       },
     });
 
-    // Calcular valores del pedido
     const valor_productos = carritoProductos.reduce((total, carrito) => {
       return total + (carrito.TiendasProducto.precio || 0);
     }, 0);
 
     const valor_descuento = carritoProductos.reduce((total, carrito) => {
-      // Ajusta según la lógica de descuento, si es necesario
       return total + ((carrito.TiendasProducto.valor || 0) - (carrito.TiendasProducto.valor_promocion || 0));
     }, 0);
 
-    // Obtener valor_envio según la distancia
     const distancia = await TiendasDistancias.findOne({
       where: {
         id_tienda,
@@ -53,10 +45,8 @@ export const crearPedido = async (req, res) => {
 
     const valor_envio = distancia ? distancia.valor : 0;
 
-    // Calcular valor_final
     const valor_final = valor_productos - valor_descuento + valor_envio;
 
-    // Crear el pedido
     const nuevoPedido = await Pedido.create({
       instrucciones,
       entrega_fecha,
@@ -66,10 +56,8 @@ export const crearPedido = async (req, res) => {
       valor_final,
       id_tienda,
       id_user,
-      // ...otros datos del pedido
     });
 
-    // Crear los pedidos_productos
     for (const carrito of carritoProductos) {
       await PedidoProducto.create({
         cantidad: carrito.cantidad,
@@ -77,17 +65,14 @@ export const crearPedido = async (req, res) => {
         total_teorico: (carrito.TiendasProducto.precio || 0) * carrito.cantidad,
         id_producto: carrito.id_producto,
         id_pedido: nuevoPedido.id,
-        // ...otros datos de pedidos_productos
       });
     }
 
-    // Insertar en la tabla Pedidos_Estados
     await PedidoEstado.create({
       estado: 1,
       id_pedido: nuevoPedido.id,
     });
 
-    // Respuesta
     return res.status(201).json({ message: 'Pedido creado exitosamente', pedido: nuevoPedido });
   } catch (error) {
     console.error(error);
@@ -97,9 +82,8 @@ export const crearPedido = async (req, res) => {
 
 export const listarPedidosCliente = async (req, res) => {
   try {
-    const { id_user } = req.body; // Ajusta según tu estructura de request
+    const { id_user } = req.body;
 
-    // Listar pedidos agrupados por tienda y filtrados por estados (1, 2, 3)
     const pedidos = await Pedido.findAll({
       attributes: [
         'id_tienda',
@@ -108,14 +92,14 @@ export const listarPedidosCliente = async (req, res) => {
       where: {
         id_user,
         estado: {
-          [Op.in]: [1, 2, 3], // Puedes ajustar los estados según tus necesidades
+          [Op.in]: [1, 2, 3],
         },
       },
       group: ['id_tienda'],
       include: [
         {
           model: Tienda,
-          attributes: ['id', 'nombre'], // Ajusta las columnas según tus necesidades
+          attributes: ['id', 'nombre'],
         },
       ],
     });

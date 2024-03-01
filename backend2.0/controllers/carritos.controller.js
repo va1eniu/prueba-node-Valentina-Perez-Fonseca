@@ -1,8 +1,7 @@
-// carritos.controller.js
 import { validationResult } from 'express-validator';
 import Carrito from '../models/carritos.model.js';
 import Producto from '../models/productos.model.js';
-import TiendasProductos from '../models/tiendas_productos.model.js';  // Asegúrate de importar el modelo TiendasProductos
+import TiendasProductos from '../models/tiendas_productos.model.js';
 
 const CarritoController = {
   agregarProductoAlCarrito: async (req, res) => {
@@ -12,31 +11,27 @@ const CarritoController = {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      // Recupera los datos del cuerpo de la solicitud
       const { id_producto, id_tienda, cantidad } = req.body;
 
-      // Verifica si el producto ya está en el carrito del usuario
       const carritoExistente = await Carrito.findOne({
         where: {
           id_producto,
           id_tienda,
-          id_user: 1, // Supongo que el id_user por defecto es 1
+          id_user: 1,
         },
       });
 
-      // Si el producto ya está en el carrito, actualiza la cantidad
       if (carritoExistente) {
         carritoExistente.cantidad += cantidad;
         await carritoExistente.save();
         return res.status(200).json(carritoExistente);
       }
 
-      // Si el producto no está en el carrito, lo agrega
       const nuevoProductoEnCarrito = await Carrito.create({
         id_producto,
         id_tienda,
         cantidad,
-        id_user: 1, // Supongo que el id_user por defecto es 1
+        id_user: 1,
       });
 
       res.status(201).json(nuevoProductoEnCarrito);
@@ -67,7 +62,7 @@ const CarritoController = {
               id_tienda,
               id_user,
             },
-            as: 'TiendasProducto', // Asegúrate de usar el alias correcto
+            as: 'TiendasProducto',
           },
         ],
       });
@@ -85,7 +80,6 @@ const CarritoController = {
           valor_total: valorTotal,
           nombre,
           compra_maxima,
-          // Agrega otros datos necesarios
         };
       });
 

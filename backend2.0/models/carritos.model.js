@@ -1,4 +1,3 @@
-// carritos.model.js
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
 import Producto from './productos.model.js';
@@ -53,7 +52,6 @@ Carrito.init({
   tableName: 'carritos',
 });
 
-// Ajuste en las asociaciones
 Carrito.belongsTo(Producto, { foreignKey: 'id_producto', targetKey: 'id' });
 Carrito.belongsTo(Tienda, { foreignKey: 'id_tienda' });
 Carrito.belongsTo(User, { foreignKey: 'id_user' });

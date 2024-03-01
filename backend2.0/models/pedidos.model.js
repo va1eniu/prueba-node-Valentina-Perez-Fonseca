@@ -96,11 +96,11 @@ Pedido.init({
 });
 
 /* Pedido.belongsTo(Tienda, { foreignKey: 'id_tienda' });
-// Relación con PedidosEstados
+
 Pedido.hasMany(PedidoEstado, { foreignKey: 'id_pedido' });
-// Relación con Carritos
+
 Pedido.hasMany(Carrito, { foreignKey: 'id_pedido' });
-// Relación con PedidosProductos
+
 Pedido.hasMany(PedidoProducto, { foreignKey: 'id_pedido' }); */
 
 export default Pedido;

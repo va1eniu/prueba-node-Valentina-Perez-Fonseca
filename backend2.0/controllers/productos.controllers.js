@@ -1,4 +1,4 @@
-import  Producto  from "../models/productos.model.js";// Asegúrate de importar correctamente tus modelos
+import  Producto  from "../models/productos.model.js";
 
 const ProductoController = {
 

@@ -1,6 +1,4 @@
-// index.js
 
-// Importa todos los modelos
 import UserCliente from './users_clientes.model.js';
 import UserDireccion from './users_direcciones.model.js';
 import Carrito from './carritos.model.js';
@@ -54,7 +52,7 @@ TiendaProducto.belongsTo(Promocion, { foreignKey: 'id_promocion', as: 'promocion
 TiendaPromocion.belongsTo(Tienda, { foreignKey: 'id_tienda', as: 'tienda' });
 TiendaPromocion.belongsTo(Promocion, { foreignKey: 'id_promocion', as: 'promocion' });
 
-// Exporta todos los modelos
+
 export {
   UserCliente,
   UserDireccion,

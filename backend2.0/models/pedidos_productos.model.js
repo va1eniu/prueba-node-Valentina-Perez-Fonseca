@@ -63,9 +63,9 @@ PedidoProducto.init({
 });
 
 PedidoProducto.belongsTo(Producto, { foreignKey: 'id_producto' });
-// Relación con Pedidos
+
 PedidoProducto.belongsTo(Pedido, { foreignKey: 'id_pedido' });
-// Relación con Promociones
+
 PedidoProducto.belongsTo(Promocion, { foreignKey: 'id_promocion' });
 
 export default PedidoProducto;
