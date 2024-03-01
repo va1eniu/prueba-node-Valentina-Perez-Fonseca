@@ -57,7 +57,6 @@ const TiendasPController = {
             model: Productos,
             as: 'producto',
             attributes: ['nombre', 'barcode'],
-            
           },
           {
             model: Promocion,
@@ -95,23 +94,40 @@ const TiendasPController = {
         ],
       });
 
-      const productosFormateados = productos.map(producto => {
-        const { nombre, barcode } = producto.producto;
-        const valor = producto.valor;
-        const promocion = producto.tiendaPromocion;
-        const valor_promocion = promocion ? valor - (valor * promocion.porcentaje / 100) : valor;
+      const productosFormateados = await Promise.all(productos.map(async (producto) => {
+        try {
+          const { nombre, barcode } = producto.producto;
 
-        return {
-          nombre,
-          barcode,
-          valor,
-          promocion: promocion ? {
-            id_promocion: promocion.id_promocion,
-            porcentaje: promocion.porcentaje,
-            valor_promocion,
-          } : null,
-        };
-      });
+          const tiendaProductoInfo = await TiendasProductos.findOne({
+            where: { id_tienda: producto.id_tienda, id_producto: producto.id_producto },
+            attributes: ['valor'],
+          });
+
+          const valor = tiendaProductoInfo ? tiendaProductoInfo.valor : 0;
+
+          const promocion = producto.tiendaPromocion && producto.tiendaPromocion.estado === 1 &&
+  producto.tiendaPromocion.inicio <= new Date() &&
+  producto.tiendaPromocion.fin >= new Date() ? producto.tiendaPromocion : null;
+
+          const valor_promocion = promocion ? valor - (valor * promocion.porcentaje / 100) : valor;
+
+          return {
+            nombre,
+            barcode,
+            valor,
+            promocion: promocion
+              ? {
+                  id_promocion: promocion.id_promocion,
+                  porcentaje: promocion.porcentaje,
+                  valor_promocion,
+                }
+              : null,
+          };
+        } catch (error) {
+          console.error('Error al formatear productos:', error);
+          throw error;
+        }
+      }));
 
       res.status(200).json(productosFormateados);
     } catch (error) {
