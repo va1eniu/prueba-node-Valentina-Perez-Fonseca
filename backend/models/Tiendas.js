@@ -1,8 +1,5 @@
-// tiendas.model.js
-
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
-/* import Productos from './productos.model.js';  */// Asegúrate de importar el modelo de productos
 
 dotenv.config();
 
@@ -18,7 +15,10 @@ class Tiendas extends Model {}
 
 Tiendas.init(
   {
-    // ... otras propiedades ...
+    id_tienda: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
     nombre: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -29,7 +29,6 @@ Tiendas.init(
         },
       },
     },
-    // ... otras propiedades ...
   },
   {
     sequelize,
@@ -40,14 +39,14 @@ Tiendas.init(
 );
 
 (async () => {
-    try {
-      await sequelize.authenticate();
-     
-      await sequelize.sync({ force: true });
-
-    } catch (error) {
-  
-    }
-  })();
+  try {
+    await sequelize.authenticate();
+    console.log(`Conexión establecida con éxito a la base de datos.`);
+    await sequelize.sync({ force: true });
+    console.log(`Base de datos sincronizada.`);
+  } catch (error) {
+    console.error(`Error al conectar o sincronizar la base de datos: ${error.message}`);
+  }
+})();
 
 export default Tiendas;

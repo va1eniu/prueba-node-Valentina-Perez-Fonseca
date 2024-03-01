@@ -110,7 +110,7 @@ export default Tiendas;
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
 import Tiendas from './Tiendas.js';
-import Productos from './Productos.js'; // Asegúrate de importar el modelo Productos
+import Productos from './Productos.js'; 
 import Promocion from './promociones.js';
 
 dotenv.config();
@@ -175,7 +175,6 @@ TiendasProductos.init(
   }
 })();
 
-// Definir relaciones
 TiendasProductos.belongsTo(Tiendas, { foreignKey: 'id_tienda' });
 TiendasProductos.belongsTo(Productos, { foreignKey: 'id_producto' });
 TiendasProductos.belongsTo(Promocion, { foreignKey: 'id_promocion' });

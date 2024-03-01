@@ -1,6 +1,6 @@
-import { Sequelize, DataTypes, Model } from 'sequelize';
+/* import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
-import Tiendas from './Tiendas.js'; // Asegúrate de importar el modelo Productos
+import Tiendas from './Tiendas.js';
 import Promocion from './promociones.js';
 
 dotenv.config();
@@ -17,7 +17,6 @@ class Tiendas_promociones extends Model {}
 
 Tiendas_promociones.init(
   {
-    // ... otras propiedades ...
     nombre: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -62,11 +61,10 @@ Tiendas_promociones.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
-    id_promocion: { // Corregido: Utilizar id_promocion como clave externa
+    id_promocion: {
       type: DataTypes.UUID,
       allowNull: false,
     },
-    // ... otras propiedades ...
   },
   {
     sequelize,
@@ -87,8 +85,8 @@ Tiendas_promociones.init(
   }
 })();
 
-// Corregido: Asociar con modelos Productos y Promocion utilizando la clave externa correcta
 Tiendas_promociones.belongsTo(Tiendas, { foreignKey: 'id_tienda' });
 Tiendas_promociones.belongsTo(Promocion, { foreignKey: 'id_promocion' });
 
 export default Tiendas_promociones;
+ */

@@ -1,4 +1,4 @@
-import Tiendas_promociones from "../models/Tiendas_promociones.js";
+/* import Tiendas_promociones from "../models/Tiendas_promociones.js";
 
 const Tiendas_promocionesController = {
   getAllTiendas_promocioneses: async (req, res) => {
@@ -86,3 +86,4 @@ const Tiendas_promocionesController = {
 
 
 export default Tiendas_promocionesController;
+ */
