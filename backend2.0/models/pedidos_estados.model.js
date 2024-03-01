@@ -39,11 +39,11 @@ PedidoEstado.init({
   timestamps: false,
   tableName: 'pedidos_estados',
 });
-const setPedidoAssociation = async () => {
+/* const setPedidoAssociation = async () => {
   const { default: Pedido } = await import('./pedidos.model.js');
   PedidoProducto.belongsTo(Pedido, { foreignKey: 'id_pedido' });
 };
 
-setPedidoAssociation();
+setPedidoAssociation(); */
 
 export default PedidoEstado;

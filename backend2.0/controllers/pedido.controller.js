@@ -1,9 +1,13 @@
 // PedidoController.js
+
 import Carrito from '../models/carritos.model.js';
 import Pedido from '../models/pedidos.model.js';
 import PedidoProducto from '../models/pedidos_productos.model.js';
 import TiendasDistancias from '../models/tiendas_distancias.model.js';
 import TiendasProductos from '../models/tiendas_productos.model.js';
+import PedidoEstado from '../models/pedidos_estados.model.js'; // Ajusta la ruta según la estructura de tu proyecto
+import Tienda from '../models/tiendas.model.js'; // Ajusta la ruta según la estructura de tu proyecto
+import { Op } from 'sequelize';
 
 export const crearPedido = async (req, res) => {
   try {
@@ -88,5 +92,37 @@ export const crearPedido = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Error al crear el pedido' });
+  }
+};
+
+export const listarPedidosCliente = async (req, res) => {
+  try {
+    const { id_user } = req.body; // Ajusta según tu estructura de request
+
+    // Listar pedidos agrupados por tienda y filtrados por estados (1, 2, 3)
+    const pedidos = await Pedido.findAll({
+      attributes: [
+        'id_tienda',
+        [Pedido.sequelize.fn('COUNT', 'id'), 'cantidad_pedidos'],
+      ],
+      where: {
+        id_user,
+        estado: {
+          [Op.in]: [1, 2, 3], // Puedes ajustar los estados según tus necesidades
+        },
+      },
+      group: ['id_tienda'],
+      include: [
+        {
+          model: Tienda,
+          attributes: ['id', 'nombre'], // Ajusta las columnas según tus necesidades
+        },
+      ],
+    });
+
+    return res.status(200).json({ pedidos });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error al obtener los pedidos del cliente' });
   }
 };

@@ -56,7 +56,7 @@ const TiendasPController = {
           {
             model: Productos,
             as: 'producto',
-            attributes: ['nombre', 'barcode', 'valor'],
+            attributes: ['nombre', 'barcode'],
           },
           {
             model: Promocion,
@@ -64,7 +64,7 @@ const TiendasPController = {
             where: {
               estado: 1,
             },
-            attributes: ['nombre', 'porcentaje'],
+            attributes: ['porcentaje'],
             include: [
               {
                 model: TiendasPromocion,
@@ -75,16 +75,29 @@ const TiendasPController = {
                   inicio: { [Op.lte]: new Date() },
                   fin: { [Op.gte]: new Date() },
                 },
-                attributes: [],
+                attributes: ['porcentaje'],
               },
             ],
+          },
+          {
+            model: TiendasPromocion,
+            required: false,
+            where: {
+              id_tienda,
+              estado: 1,
+              inicio: { [Op.lte]: new Date() },
+              fin: { [Op.gte]: new Date() },
+            },
+            attributes: ['id_promocion', 'porcentaje'],
+            as: 'tiendaPromocion',
           },
         ],
       });
 
       const productosFormateados = productos.map(producto => {
-        const { nombre, barcode, valor } = producto.Producto;
-        const promocion = producto.Promocione;
+        const { nombre, barcode } = producto.producto;
+        const valor = producto.valor;
+        const promocion = producto.tiendaPromocion;
         const valor_promocion = promocion ? valor - (valor * promocion.porcentaje / 100) : valor;
 
         return {
@@ -92,7 +105,7 @@ const TiendasPController = {
           barcode,
           valor,
           promocion: promocion ? {
-            nombre: promocion.nombre,
+            id_promocion: promocion.id_promocion,
             porcentaje: promocion.porcentaje,
             valor_promocion,
           } : null,

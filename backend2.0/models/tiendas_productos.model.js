@@ -1,5 +1,9 @@
 import { Sequelize, DataTypes, Model } from 'sequelize';
 import dotenv from 'dotenv';
+import Producto from './productos.model.js';
+import Tienda from './tiendas.model.js';
+import Promocion from './promociones.model.js';
+import TiendaPromocion from './tiendas_promociones.model.js';
 
 dotenv.config();
 
@@ -11,9 +15,7 @@ const sequelize = new Sequelize({
   database: process.env.DB_NAME,
 });
 
-import Producto from './productos.model.js';
-import Tienda from './tiendas.model.js';
-import Promocion from './promociones.model.js';
+
 
 class TiendasProductos extends Model {}
 
@@ -30,7 +32,7 @@ TiendasProductos.init(
       allowNull: false,
       references: {
         model: Tienda,
-        key: 'id',
+        key: 'id_tienda',
       },
     },
     id_producto: {
@@ -38,7 +40,7 @@ TiendasProductos.init(
       allowNull: false,
       references: {
         model: Producto,
-        key: 'id',
+        key: 'id_producto',
       },
     },
     id_promocion: {
@@ -67,9 +69,9 @@ TiendasProductos.init(
 );
 
 TiendasProductos.belongsTo(Tienda, { foreignKey: 'id_tienda' });
-/* TiendasProductos.belongsTo(Producto, { foreignKey: 'id_producto' }); */
-TiendasProductos.belongsTo(Promocion, { foreignKey: 'id_promocion' });
 TiendasProductos.belongsTo(Producto, { foreignKey: 'id_producto', as: 'producto' });
+TiendasProductos.belongsTo(Promocion, { foreignKey: 'id_promocion' });
+TiendasProductos.belongsTo(TiendaPromocion, { foreignKey: 'id_promocion', as: 'tiendaPromocion' });
 
 
 export default TiendasProductos;
